@@ -20,9 +20,9 @@ public class Airline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "airline_id", nullable = false)
-    private Integer id;
+    private Long id;
 
-    @OneToMany(mappedBy = "airline", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "airline")
     @JsonIgnore
     @ToString.Exclude
     private List<Flight> flights = new ArrayList<>();

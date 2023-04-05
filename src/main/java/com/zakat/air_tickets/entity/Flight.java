@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,24 +22,24 @@ public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "flight_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "departure_city")
-    private String departure_city;
+    private String departureCity;
 
     @Column(name = "arrival_city")
-    private String arrival_city;
+    private String arrivalCity;
 
     @Column(name = "departure_time")
-    private Date departure_time;
+    private Timestamp departureTime;
 
     @Column(name = "arrival_time")
-    private Date arrival_time;
+    private Timestamp arrivalTime;
 
     @Column(name = "price")
     private Double price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "airline_id")
     private Airline airline;
 
