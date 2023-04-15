@@ -31,6 +31,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "role")
+    private String role;
+
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @JsonIgnore
     @ToString.Exclude
