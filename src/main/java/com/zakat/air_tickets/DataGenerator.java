@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -26,9 +28,7 @@ public class DataGenerator {
             Airline airline = generateAirline();
             int nFlights = faker.number().numberBetween(10, 20);
 
-            for (int j = 0; j < nFlights; j++) {
-                Flight flight = generateFlight(airline);
-            }
+            generateFlights(airline, nFlights);
         }
         System.out.println("Data has been generated!");
     }
@@ -42,22 +42,35 @@ public class DataGenerator {
     }
 
     @Transactional
-    public Flight generateFlight(Airline airline) {
-        Flight flight = new Flight();
-        flight.setAirline(airline);
-        flight.setArrivalCity(faker.address().city());
-        flight.setDepartureCity(faker.address().city());
+    public void generateFlights(Airline airline, int nFlights) {
+        String departureCity = faker.address().city();
+        String arrivalCity = faker.address().city();
 
-        Date departureDate = faker.date().past(30, TimeUnit.DAYS);
-        Date arrivalDate = faker.date().future(1, TimeUnit.DAYS, departureDate);
+        for (int i = 0; i < nFlights; i++) {
+            Flight flight = new Flight();
+            flight.setAirline(airline);
+            flight.setDepartureCity(departureCity);
+            flight.setArrivalCity(arrivalCity);
 
-        Timestamp departure = new Timestamp(departureDate.getTime());
-        Timestamp arrival = new Timestamp(arrivalDate.getTime());
+            if (faker.number().randomDigit() < 5) {
+                flight.setDepartureCity(faker.address().city());
+            }
 
-        flight.setDepartureTime(departure);
-        flight.setArrivalTime(arrival);
-        flight.setPrice(faker.number().randomDouble(2, 1000, 10000));
+            if (faker.number().randomDigit() < 5) {
+                flight.setArrivalCity(faker.address().city());
+            }
 
-        return flightRepository.save(flight);
+            Date departureDate = faker.date().past(30, TimeUnit.DAYS);
+            Date arrivalDate = faker.date().future(1, TimeUnit.DAYS, departureDate);
+
+            Timestamp departure = new Timestamp(departureDate.getTime());
+            Timestamp arrival = new Timestamp(arrivalDate.getTime());
+
+            flight.setDepartureTime(departure);
+            flight.setArrivalTime(arrival);
+            flight.setPrice(faker.number().randomDouble(2, 1000, 10000));
+
+            flightRepository.save(flight);
+        }
     }
 }
