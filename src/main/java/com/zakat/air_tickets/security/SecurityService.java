@@ -40,6 +40,7 @@ public class SecurityService implements UserDetailsService {
         user.setPassword(encodedPassword);
         user.setEmail(email);
         user.setUsername(username);
+        user.setRole("USER");
 
         return userRepository.save(user);
     }
