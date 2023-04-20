@@ -2,8 +2,12 @@ package com.zakat.air_tickets.components;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.tabs.Tab;
@@ -15,13 +19,18 @@ import com.zakat.air_tickets.view.MyProfileView;
 import com.zakat.air_tickets.view.SearchView;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.awt.image.BufferedImage;
+
 public class HeaderAndNavbarLayout extends AppLayout {
     private final SecurityService securityService;
     private final UserDetails user;
+    private Dialog logoutDialog;
 
     public HeaderAndNavbarLayout(SecurityService securityService) {
         this.securityService = securityService;
         user = securityService.getAuthenticatedUser();
+
+        logoutDialog = getDialog();
 
         DrawerToggle drawerToggle = new DrawerToggle();
         H1 title = new H1("SkyWing");
@@ -41,7 +50,22 @@ public class HeaderAndNavbarLayout extends AppLayout {
         addToDrawer(username, tabs);
         addToNavbar(drawerToggle, title);
 
+        addToNavbar(logoutDialog);
         setPrimarySection(Section.DRAWER);
+    }
+
+    private Dialog getDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Logout");
+        dialog.add(new Paragraph("Are you sure?"));
+
+        Button acceptBtn = new Button("Accept", e -> securityService.logout());
+        acceptBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        Button cancelBtn = new Button("Cancel", e -> dialog.close());
+
+        dialog.getFooter().add(cancelBtn, acceptBtn);
+
+        return dialog;
     }
 
     private Tabs getTabs() {
@@ -54,7 +78,7 @@ public class HeaderAndNavbarLayout extends AppLayout {
 
         tabs.addSelectedChangeListener(e -> {
             if (e.getSelectedTab() == logout) {
-                securityService.logout();
+                logoutDialog.open();
             } else if (e.getSelectedTab() == profile) {
                 getUI().ifPresent(ui -> ui.navigate(MyProfileView.class));
             } else if (e.getSelectedTab() == findTickets) {
