@@ -2,7 +2,6 @@ package com.zakat.air_tickets.security;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.zakat.air_tickets.entity.User;
 import com.zakat.air_tickets.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
