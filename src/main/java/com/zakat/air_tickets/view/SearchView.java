@@ -140,23 +140,27 @@ public class SearchView extends VerticalLayout {
         departureCity.setPlaceholder("From");
         departureCity.setItems(departureCities);
         departureCity.setAllowCustomValue(true);
+        departureCity.setClearButtonVisible(true);
 
         arrivalCity = new ComboBox<>();
         arrivalCity.setPlaceholder("To");
         arrivalCity.setItems(arrivalCities);
         arrivalCity.setAllowCustomValue(true);
+        arrivalCity.setClearButtonVisible(true);
 
         departureDate = new DatePicker();
         departureDate.setPlaceholder("When");
         departureDate.addValueChangeListener(e -> {
             arrivalDate.setMin(e.getValue());
         });
+        departureDate.setClearButtonVisible(true);
 
         arrivalDate = new DatePicker();
         arrivalDate.setPlaceholder("Back");
         arrivalDate.addValueChangeListener(e -> {
             departureDate.setMax(e.getValue());
         });
+        arrivalDate.setClearButtonVisible(true);
 
         formLayout.add(departureCity, arrivalCity, departureDate, arrivalDate);
 
