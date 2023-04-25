@@ -1,12 +1,17 @@
 package com.zakat.air_tickets.view;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.zakat.air_tickets.Utility;
 import com.zakat.air_tickets.components.HeaderAndNavbarLayout;
 import com.zakat.air_tickets.entity.Flight;
@@ -21,7 +26,6 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
     private FlightRepository flightRepository;
     private Flight flight;
     private H2 title = new H2();
-    private TextField price;
     private Grid<Flight> grid = new Grid<>();
 
     public FlightView(FlightRepository flightRepository) {
@@ -29,21 +33,37 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
 
         grid.addColumn(getRenderer("departure")).setHeader("Departure");
         grid.addColumn(getRenderer("arrival")).setHeader("Arrival");
-        grid.addColumn(f -> f.getAirline().getName()).setHeader("Airline");
+        grid.addColumn(f -> f.getAirline().getName()).setAutoWidth(true).setHeader("Airline");
+        grid.addColumn(Flight::getPrice).setAutoWidth(true).setHeader("Price, $");
         grid.setAllRowsVisible(true);
+        grid.getStyle().set("width", "75%");
+        grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
 
-        price = new TextField();
-        price.setReadOnly(true);
-        price.setLabel("Price");
-        price.setPrefixComponent(new Span("$"));
+        Button buyBtn = new Button("Buy ticket");
+        buyBtn.setIcon(VaadinIcon.CART.create());
+        buyBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        add(title, grid, price);
+        add(title, grid, buyBtn);
     }
 
-    private ComponentRenderer<VerticalLayout, Flight> getRenderer(String source) {
-        return new ComponentRenderer<>(VerticalLayout::new, (layout, flight) -> {
+    private ComponentRenderer<HorizontalLayout, Flight> getRenderer(String source) {
+        return new ComponentRenderer<>(HorizontalLayout::new, (horizontalLayout, flight) -> {
+            VerticalLayout layout = new VerticalLayout();
+
+            layout.addClassNames(
+                    LumoUtility.LineHeight.MEDIUM,
+                    LumoUtility.Padding.NONE,
+                    LumoUtility.Gap.SMALL
+            );
             Span city = new Span();
+            city.addClassNames(
+                    LumoUtility.FontWeight.BOLD
+            );
             Span date = new Span();
+            date.addClassNames(
+                    LumoUtility.FontSize.SMALL,
+                    LumoUtility.TextColor.SECONDARY
+            );
 
             if (source.equals("departure")) {
                 city.setText(flight.getDepartureCity());
@@ -53,19 +73,15 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
                 date.setText(Utility.timestampToString(flight.getArrivalTime()));
             }
 
-
             layout.add(city, date);
+            horizontalLayout.add(layout);
         });
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, Long flightId) {
         flight = flightRepository.findById(flightId).orElseThrow();
-
-        price.setValue(flight.getPrice().toString());
-
         title.setText(String.format("Flight: %s -> %s", flight.getDepartureCity(), flight.getArrivalCity()));
-
         grid.setItems(flight);
     }
 }
