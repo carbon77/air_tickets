@@ -14,6 +14,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 @Route(value = "/search", layout = HeaderAndNavbarLayout.class)
 @RouteAlias("search")
+@PageTitle("SkyWing | Search")
 @PermitAll
 public class SearchView extends VerticalLayout {
     private ComboBox<String> departureCity;
@@ -46,7 +48,7 @@ public class SearchView extends VerticalLayout {
 
     public SearchView(FlightRepository flightRepository) {
         this.flightRepository = flightRepository;
-        H2 title = new H2("Tickets Search");
+        H2 title = new H2("Search");
 
         departureCities = flightRepository.getAllDepartureCities();
         arrivalCities = flightRepository.getAllArrivalCities();
@@ -54,6 +56,7 @@ public class SearchView extends VerticalLayout {
         FormLayout form = generateForm();
         submitBtn = new Button("Find tickets");
         submitBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        submitBtn.setIcon(VaadinIcon.SEARCH.create());
         submitBtn.addClickListener(this::onSubmit);
 
         grid = new Grid<>();
@@ -70,6 +73,9 @@ public class SearchView extends VerticalLayout {
             Button button = new Button("Purchase ticket");
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             button.setIcon(VaadinIcon.CART.create());
+            button.addClickListener(e -> {
+               getUI().ifPresent(ui -> ui.navigate(FlightView.class, flight.getId()));
+            });
 
             layout.setPadding(false);
             layout.add(button);
