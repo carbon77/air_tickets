@@ -30,7 +30,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
-@Route(value = "/search", layout = HeaderAndNavbarLayout.class)
+@Route(value = "/", layout = HeaderAndNavbarLayout.class)
 @RouteAlias("search")
 @PageTitle("SkyWing | Search")
 @PermitAll
