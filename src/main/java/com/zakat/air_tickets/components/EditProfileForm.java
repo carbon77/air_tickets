@@ -10,7 +10,6 @@ import com.zakat.air_tickets.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 public class EditProfileForm extends FormLayout {
 
