@@ -7,7 +7,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
   mvc:
     format:
       date: iso
@@ -18,3 +18,9 @@ springdoc:
 
 vaadin:
   exclude-urls: /api/**
+
+app:
+  admin:
+    username: admin
+    password: admin
+    email: admin@example.com
