@@ -51,7 +51,7 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         grid.addColumn(Utility.getRenderer("departure")).setHeader("Departure");
         grid.addColumn(Utility.getRenderer("arrival")).setHeader("Arrival");
         grid.addColumn(f -> f.getAirline().getName()).setAutoWidth(true).setHeader("Airline");
-        grid.addColumn(Flight::getPrice).setAutoWidth(true).setHeader("Price, $");
+        grid.addColumn(Flight::getPrice).setAutoWidth(true).setHeader("Price, ₽");
         grid.setAllRowsVisible(true);
         grid.getStyle().set("width", "75%");
         grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
@@ -70,7 +70,7 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         amountField.setMin(1);
         amountField.setValue(1);
         amountField.addValueChangeListener(e -> {
-            buyBtn.setText(String.format("Buy: %.2f$", flight.getPrice() * amountField.getValue()));
+            buyBtn.setText(String.format("Buy: %.2f₽", flight.getPrice() * amountField.getValue()));
         });
 
         submitLayout.add(amountField, buyBtn);
@@ -105,6 +105,6 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         flight = flightRepository.findById(flightId).orElseThrow();
         title.setText(String.format("Flight: %s -> %s", flight.getDepartureCity(), flight.getArrivalCity()));
         grid.setItems(flight);
-        buyBtn.setText(String.format("Buy: %s$", flight.getPrice()));
+        buyBtn.setText(String.format("Buy: %s₽", flight.getPrice()));
     }
 }
