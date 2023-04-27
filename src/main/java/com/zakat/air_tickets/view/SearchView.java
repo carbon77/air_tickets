@@ -57,7 +57,7 @@ public class SearchView extends VerticalLayout {
 
         grid = new Grid<>();
         grid.addColumn(Utility.getRenderer("departure")).setHeader("Departure");
-        grid.addColumn(Utility.getRenderer("departure")).setHeader("Arrival");
+        grid.addColumn(Utility.getRenderer("arrival")).setHeader("Arrival");
         grid.addColumn(f -> f.getAirline().getName()).setHeader("Airline");
         grid.addColumn(getActionRenderer()).setHeader("Action");
 
