@@ -8,16 +8,12 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.zakat.air_tickets.Utility;
 import com.zakat.air_tickets.components.HeaderAndNavbarLayout;
 import com.zakat.air_tickets.entity.Flight;
@@ -60,8 +56,8 @@ public class SearchView extends VerticalLayout {
         submitBtn.addClickListener(this::onSubmit);
 
         grid = new Grid<>();
-        grid.addColumn(getDepartureRenderer()).setHeader("Departure");
-        grid.addColumn(getArrivalRenderer()).setHeader("Arrival");
+        grid.addColumn(Utility.getRenderer("departure")).setHeader("Departure");
+        grid.addColumn(Utility.getRenderer("departure")).setHeader("Arrival");
         grid.addColumn(f -> f.getAirline().getName()).setHeader("Airline");
         grid.addColumn(getActionRenderer()).setHeader("Action");
 
@@ -74,35 +70,11 @@ public class SearchView extends VerticalLayout {
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             button.setIcon(VaadinIcon.CART.create());
             button.addClickListener(e -> {
-               getUI().ifPresent(ui -> ui.navigate(FlightView.class, flight.getId()));
+                getUI().ifPresent(ui -> ui.navigate(FlightView.class, flight.getId()));
             });
 
             layout.setPadding(false);
             layout.add(button);
-        });
-    }
-
-    private ComponentRenderer<VerticalLayout, Flight> getArrivalRenderer() {
-        return new ComponentRenderer<>(VerticalLayout::new, (layout, flight) -> {
-            Span city = new Span(flight.getArrivalCity());
-            city.addClassNames(LumoUtility.FontWeight.BOLD);
-
-            Span time = new Span(Utility.timestampToString(flight.getArrivalTime()));
-
-            layout.setPadding(false);
-            layout.add(city, time);
-        });
-    }
-
-    private ComponentRenderer<VerticalLayout, Flight> getDepartureRenderer() {
-        return new ComponentRenderer<>(VerticalLayout::new, (layout, flight) -> {
-            Span city = new Span(flight.getDepartureCity());
-            city.addClassNames(LumoUtility.FontWeight.BOLD);
-
-            Span time = new Span(Utility.timestampToString(flight.getDepartureTime()));
-
-            layout.setPadding(false);
-            layout.add(city, time);
         });
     }
 

@@ -6,14 +6,10 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.*;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.zakat.air_tickets.Utility;
 import com.zakat.air_tickets.components.HeaderAndNavbarLayout;
 import com.zakat.air_tickets.entity.Booking;
@@ -24,7 +20,6 @@ import com.zakat.air_tickets.repository.FlightRepository;
 import com.zakat.air_tickets.security.SecurityService;
 import com.zakat.air_tickets.security.UserPrincipal;
 import jakarta.annotation.security.PermitAll;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Route(value = "/flight", layout = HeaderAndNavbarLayout.class)
 @RouteAlias("flight")
@@ -47,8 +42,8 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         this.securityService = securityService;
         this.bookingRepository = bookingRepository;
 
-        grid.addColumn(getRenderer("departure")).setHeader("Departure");
-        grid.addColumn(getRenderer("arrival")).setHeader("Arrival");
+        grid.addColumn(Utility.getRenderer("departure")).setHeader("Departure");
+        grid.addColumn(Utility.getRenderer("arrival")).setHeader("Arrival");
         grid.addColumn(f -> f.getAirline().getName()).setAutoWidth(true).setHeader("Airline");
         grid.addColumn(Flight::getPrice).setAutoWidth(true).setHeader("Price, $");
         grid.setAllRowsVisible(true);
@@ -80,38 +75,6 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         bookingRepository.save(booking);
 
         Notification.show("Ticket has been bought");
-    }
-
-    private ComponentRenderer<HorizontalLayout, Flight> getRenderer(String source) {
-        return new ComponentRenderer<>(HorizontalLayout::new, (horizontalLayout, flight) -> {
-            VerticalLayout layout = new VerticalLayout();
-
-            layout.addClassNames(
-                    LumoUtility.LineHeight.MEDIUM,
-                    LumoUtility.Padding.NONE,
-                    LumoUtility.Gap.SMALL
-            );
-            Span city = new Span();
-            city.addClassNames(
-                    LumoUtility.FontWeight.BOLD
-            );
-            Span date = new Span();
-            date.addClassNames(
-                    LumoUtility.FontSize.SMALL,
-                    LumoUtility.TextColor.SECONDARY
-            );
-
-            if (source.equals("departure")) {
-                city.setText(flight.getDepartureCity());
-                date.setText(Utility.timestampToString(flight.getDepartureTime()));
-            } else if (source.equals("arrival")) {
-                city.setText(flight.getArrivalCity());
-                date.setText(Utility.timestampToString(flight.getArrivalTime()));
-            }
-
-            layout.add(city, date);
-            horizontalLayout.add(layout);
-        });
     }
 
     @Override
