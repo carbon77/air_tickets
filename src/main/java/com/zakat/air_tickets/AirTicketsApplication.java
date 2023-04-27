@@ -36,6 +36,7 @@ public class AirTicketsApplication {
     @Bean
     public CommandLineRunner createAdmin(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
+            System.out.println("User is creating...");
             User user = User.builder()
                     .username(adminUsername)
                     .password(passwordEncoder.encode(adminPassword))
@@ -44,6 +45,8 @@ public class AirTicketsApplication {
                     .build();
 
             userRepository.save(user);
+
+            System.out.println("User created");
         };
     }
 
