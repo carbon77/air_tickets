@@ -8,7 +8,9 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.*;
 import com.zakat.air_tickets.Utility;
 import com.zakat.air_tickets.components.HeaderAndNavbarLayout;
@@ -21,11 +23,14 @@ import com.zakat.air_tickets.security.SecurityService;
 import com.zakat.air_tickets.security.UserPrincipal;
 import jakarta.annotation.security.PermitAll;
 
+import java.sql.Timestamp;
+
 @Route(value = "/flight", layout = HeaderAndNavbarLayout.class)
 @RouteAlias("flight")
 @PageTitle("SkyWing | Flight")
 @PermitAll
 public class FlightView extends VerticalLayout implements HasUrlParameter<Long> {
+    private IntegerField amountField;
     private FlightRepository flightRepository;
     private SecurityService securityService;
     private BookingRepository bookingRepository;
@@ -50,12 +55,22 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         grid.getStyle().set("width", "75%");
         grid.addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT);
 
+        HorizontalLayout submitLayout = new HorizontalLayout();
+        submitLayout.setAlignItems(Alignment.END);
+
         Button buyBtn = new Button("Buy ticket");
         buyBtn.setIcon(VaadinIcon.CART.create());
         buyBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buyBtn.addClickListener(this::onBuy);
 
-        add(title, grid, buyBtn);
+        amountField = new IntegerField();
+        amountField.setLabel("Amount");
+        amountField.setStepButtonsVisible(true);
+        amountField.setMin(1);
+        amountField.setValue(1);
+
+        submitLayout.add(amountField, buyBtn);
+        add(title, grid, submitLayout);
     }
 
     private void onBuy(ClickEvent<Button> e) {
@@ -65,16 +80,18 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         Booking booking = bookingRepository.findByUserAndFlight(user, flight);
 
         if (booking != null) {
-            Notification.show("You have already bought this ticket");
-            return;
+            booking.setAmount(booking.getAmount() + amountField.getValue());
+        } else {
+            booking = Booking.builder()
+                    .user(user)
+                    .flight(flight)
+                    .amount(amountField.getValue())
+                    .createdAt(new Timestamp(System.currentTimeMillis()))
+                    .build();
         }
 
-        booking = new Booking();
-        booking.setUser(user);
-        booking.setFlight(flight);
         bookingRepository.save(booking);
-
-        Notification.show("Ticket has been bought");
+        Notification.show("Tickets have been bought");
     }
 
     @Override

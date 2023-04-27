@@ -9,9 +9,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "bookings")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Booking {
     @Id
