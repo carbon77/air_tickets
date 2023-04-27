@@ -32,6 +32,9 @@ public class Booking {
     @Column(name = "amount")
     private Integer amount;
 
+    @Column(name = "price")
+    private Double price;
+
     @Column(name = "created_at")
     private Timestamp createdAt;
 }

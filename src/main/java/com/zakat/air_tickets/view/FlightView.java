@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 @PageTitle("SkyWing | Flight")
 @PermitAll
 public class FlightView extends VerticalLayout implements HasUrlParameter<Long> {
+    private Button buyBtn;
     private IntegerField amountField;
     private FlightRepository flightRepository;
     private SecurityService securityService;
@@ -58,7 +59,7 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         HorizontalLayout submitLayout = new HorizontalLayout();
         submitLayout.setAlignItems(Alignment.END);
 
-        Button buyBtn = new Button("Buy ticket");
+        buyBtn = new Button("Buy ticket");
         buyBtn.setIcon(VaadinIcon.CART.create());
         buyBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buyBtn.addClickListener(this::onBuy);
@@ -68,6 +69,9 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         amountField.setStepButtonsVisible(true);
         amountField.setMin(1);
         amountField.setValue(1);
+        amountField.addValueChangeListener(e -> {
+            buyBtn.setText(String.format("Buy: %.2f$", flight.getPrice() * amountField.getValue()));
+        });
 
         submitLayout.add(amountField, buyBtn);
         add(title, grid, submitLayout);
@@ -81,11 +85,13 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
 
         if (booking != null) {
             booking.setAmount(booking.getAmount() + amountField.getValue());
+            booking.setPrice(booking.getAmount() * flight.getPrice());
         } else {
             booking = Booking.builder()
                     .user(user)
                     .flight(flight)
                     .amount(amountField.getValue())
+                    .price(amountField.getValue() * flight.getPrice())
                     .createdAt(new Timestamp(System.currentTimeMillis()))
                     .build();
         }
@@ -99,5 +105,6 @@ public class FlightView extends VerticalLayout implements HasUrlParameter<Long> 
         flight = flightRepository.findById(flightId).orElseThrow();
         title.setText(String.format("Flight: %s -> %s", flight.getDepartureCity(), flight.getArrivalCity()));
         grid.setItems(flight);
+        buyBtn.setText(String.format("Buy: %s$", flight.getPrice()));
     }
 }

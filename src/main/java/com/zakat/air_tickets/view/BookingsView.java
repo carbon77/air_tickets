@@ -43,6 +43,9 @@ public class BookingsView extends VerticalLayout {
         grid.setAllRowsVisible(true);
         grid.addColumn(getRenderer("departure")).setHeader("Departure");
         grid.addColumn(getRenderer("arrival")).setHeader("Arrival");
+        grid.addColumn(Booking::getAmount).setAutoWidth(true).setHeader("Amount");
+        grid.addColumn(Booking::getPrice).setAutoWidth(true).setHeader("Price, $");
+        grid.addColumn(b -> Utility.timestampToString(b.getCreatedAt())).setHeader("Purchased");
 
         grid.setItems(bookings);
 
