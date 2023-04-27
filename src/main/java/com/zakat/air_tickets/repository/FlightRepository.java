@@ -7,17 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
     @Query(
             "SELECT f.departureCity FROM Flight f"
     )
-    Set<String> getAllDepartureCities();
+    TreeSet<String> getAllDepartureCities();
 
     @Query(
             "SELECT f.arrivalCity FROM Flight f"
     )
-    Set<String> getAllArrivalCities();
+    TreeSet<String> getAllArrivalCities();
 
     List<Flight> findAllByDepartureCityContainsAndArrivalCityContainsAndDepartureTimeAfterAndArrivalTimeBefore(
             String departureCity,
