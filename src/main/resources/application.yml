@@ -12,13 +12,6 @@ spring:
     format:
       date: iso
 
-springdoc:
-  swagger-ui:
-    path: /api/docs.html
-
-vaadin:
-  exclude-urls: /api/**
-
 app:
   admin:
     username: admin
